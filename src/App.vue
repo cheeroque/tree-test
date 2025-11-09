@@ -1,11 +1,18 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import TreeTable from '@/components/TreeTable.vue'
+import { items } from '@/data/tree-items'
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
+  <main>
+    <TreeTable :items />
+  </main>
 </template>
 
-<style scoped></style>
+<style scoped>
+main {
+  max-width: 1200px;
+  margin: auto;
+  padding: 2rem 0;
+}
+</style>

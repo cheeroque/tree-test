@@ -1,48 +1,34 @@
-# tree-store-test
+# Тестовое задание
 
-This template should help get you started developing with Vue 3 in Vite.
+Класс `TreeStore` для работы с деревом объектов и компонент `TreeTable` для их отображения.
 
-## Recommended IDE Setup
+## Структура объекта
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+```typescript
+interface TreeItemBase {
+  id: number | string
+  parent: TreeItemId | null
+  label: string
+  [key: string]: any
+}
+```
 
-## Recommended Browser Setup
+## Методы класса
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd) 
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
+- `getAll()` - возвращает изначальный массив элементов.
+- `getItem(id)` - принимает id элемента и возвращает сам объект элемента.
+- `getChildren(id)` - принимает id элемента и возвращает массив элементов, являющихся дочерними для того элемента, чей id получен в аргументе. Если у элемента нет дочерних, то должен возвращаться пустой массив.
+- `getAllChildren(id)` - принимает id элемента и возвращает массив элементов, являющихся прямыми дочерними элементами того, чей id получен в аргументе + если у них в свою очередь есть еще дочерние элементы, они все тоже будут включены в результат и так до самого глубокого уровня.
+- `getAllParents(id)` - принимает id элемента и возвращает массив из цепочки родительских элементов, начиная от самого элемента, чей id был передан в аргументе и до корневого элемента.
+- `addItem(item: TreeItemBase)` - принимает объект нового элемента и добавляет его в общую структуру хранилища.
+- `removeItem(id)` - принимает id элемента и удаляет соответствующий элемент и все его дочерние элементы из хранилища.
+- `updateItem(item: TreeItemBase)` - принимает объект обновленного айтема и актуализирует этот айтем в хранилище.
 
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
+## Установка и запуск
 
 ```sh
 npm install
 ```
-
-### Compile and Hot-Reload for Development
-
 ```sh
 npm run dev
-```
-
-### Type-Check, Compile and Minify for Production
-
-```sh
-npm run build
-```
-
-### Lint with [ESLint](https://eslint.org/)
-
-```sh
-npm run lint
 ```

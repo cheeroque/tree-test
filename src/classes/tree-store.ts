@@ -13,7 +13,8 @@ interface TreeItem extends TreeItemBase {
 export class TreeStore {
   items: TreeItemBase[] = []
 
-  #map: Record<TreeItemId, TreeItem> = {}
+  #cleanMap: Record<TreeItemId, TreeItemBase> = {}
+  #treeMap: Record<TreeItemId, TreeItem> = {}
   #tree: TreeItem[] = []
 
   constructor(items: TreeItemBase[]) {
@@ -28,31 +29,31 @@ export class TreeStore {
 
   // Get item by id
   getItem(id: TreeItemId) {
-    return this.#map[id]
+    return this.#cleanMap[id]
   }
 
   // Get direct children of an item by its id
   getChildren(id: TreeItemId) {
-    const item = this.getItem(id)
+    const item = this.#treeMap[id]
 
     if (!item) {
       return []
     }
 
-    return item.children.slice(0)
+    return item.children.map(({ id }) => this.getItem(id)!)
   }
 
   // Get all children by item id, including nested
   getAllChildren(id: TreeItemId) {
-    const children = this.getChildren(id)
+    const result = this.getChildren(id)
 
-    for (const child of children) {
-      if (child.children.length) {
-        children.push(...this.getAllChildren(child.id))
+    for (const child of result) {
+      if (child && this.#treeMap[child.id]?.children.length) {
+        result.push(...this.getAllChildren(child.id))
       }
     }
 
-    return children
+    return result
   }
 
   // Get all parents of an item, up to the topmost level
@@ -92,23 +93,25 @@ export class TreeStore {
 
   // Build hash map & tree of items
   #init() {
-    this.#map = this.items.reduce<Record<TreeItemId, TreeItem>>((result, item) => {
-      result[item.id] = {
+    this.#cleanMap = {}
+    this.#treeMap = {}
+
+    this.items.forEach((item) => {
+      this.#cleanMap[item.id] = item
+      this.#treeMap[item.id] = {
         ...item,
         children: [],
       }
-
-      return result
-    }, {})
+    })
 
     const tree: TreeItem[] = []
 
     this.items.forEach((item) => {
-      if (item.parent && this.#map[item.parent]) {
-        this.#map[item.parent]!.children.push(this.#map[item.id]!)
+      if (item.parent && this.#treeMap[item.parent]) {
+        this.#treeMap[item.parent]!.children.push(this.#treeMap[item.id]!)
       }
       else {
-        tree.push(this.#map[item.id]!)
+        tree.push(this.#treeMap[item.id]!)
       }
     })
 

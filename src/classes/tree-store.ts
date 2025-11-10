@@ -45,9 +45,12 @@ export class TreeStore {
 
   // Get all children by item id, including nested
   getAllChildren(id: TreeItemId) {
-    const result = this.getChildren(id)
+    const result: TreeItemBase[] = []
+    const directChildren = this.getChildren(id)
 
-    for (const child of result) {
+    for (const child of directChildren) {
+      result.push(child)
+
       if (child && this.#treeMap[child.id]?.children.length) {
         result.push(...this.getAllChildren(child.id))
       }
